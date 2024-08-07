@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs, } from "firebase/firestore";
 import { User } from "firebase/auth";
-import Table from "../components/Table";
 
 type UserInfo = {
   username: string
@@ -41,11 +40,11 @@ const StartTimeList: React.FC<UserProps> = ({ user }) => {
       <table style={{width: "95%", maxWidth: "1600px"}}>
         <tbody>
           {userList.map((content) => (
-            <Table key={content.id}>
+            <tr key={content.id}>
               <th>{content.email}</th>
               <td>{content.uid}</td>
               <td>{content.username}</td>
-            </Table>
+            </tr>
           ))}
         </tbody>
       </table>

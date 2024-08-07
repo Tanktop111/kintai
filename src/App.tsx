@@ -5,6 +5,7 @@ import LoginForm from "../src/pages/LoginForm";
 import TimeStamp from './pages/TimeStamp';
 import SummaryTime from "../src/pages/SummaryTime";
 import Users from "./pages/Users";
+import Button from './pages/Button';
 
 
 
@@ -19,6 +20,7 @@ function App() {
      <Route path='/timestamp' element={<TimeStamp/>}/>
      <Route path='/summary' element={<SummaryTime/>}/> 
      <Route path='/users' element={<Users/>}/> 
+     <Route path='/button' element={<Button/>}/> 
      </Routes>
     </>
   )

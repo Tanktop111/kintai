@@ -3,15 +3,10 @@ import { User, createUserWithEmailAndPassword, onAuthStateChanged } from "fireba
 import { auth } from "../firebase/firebase";
 import { Navigate, Link } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
-import Header from "../components/Header";
-import { addDoc, collection } from "firebase/firestore";
+import Header from "../components/Head";
+import { addDoc, collection, getDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/firebase"
 
-
-// type User = {
-//   email: string
-//   password: string
-// }
 
 
 
@@ -20,7 +15,7 @@ const Signup: React.FC = () => {
   const [registerEmail, setRegisterEmail] = useState<string>("");
   const [registerPassword, setRegisterPassword] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
-
+  const [id, setId] = useState<number>(0);
 
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
@@ -32,7 +27,6 @@ const Signup: React.FC = () => {
       const user = userCredential.user
 
       if (user) {
-
         await addDoc(collection(db, "user"), {
           userName: registerName,
           email: registerEmail,
@@ -42,13 +36,39 @@ const Signup: React.FC = () => {
 
       }
 
+      if(user) {
+        await addDoc(collection(db, "users"), {
+          id
+        })
+      }
+
     } catch (e) {
       if (e instanceof FirebaseError)
         alert(e.message);
     }
   };
 
+  useEffect(() => {
+    const getFinishTime = async () => {
+      if (!user) return; // userがnullの場合は関数を終了
 
+      try {
+        const userDoc = doc(db, "users", user.uid);
+        const docRef = await getDoc(userDoc);
+        const IdValue = docRef.data()?.id;
+
+        if (IdValue !== undefined) {
+          setId(IdValue);
+        }
+      } catch (error) {
+        console.error("Error fetching finish time:", error);
+      }
+    };
+
+    if (user) {
+      getFinishTime();
+    }
+  }, [user]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {

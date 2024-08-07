@@ -32,7 +32,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
   width: 90%;
-  max-width: 150px;
+  max-width: 1200px;
   margin: 10px;
   gap: 50px;
 }

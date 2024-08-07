@@ -1,52 +1,55 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
-import { Timestamp, collection, getDocs, query, orderBy} from "firebase/firestore";
-// import ListStyle from "../components/ListStyle";
+import { Timestamp, collection, getDocs, orderBy, query } from "firebase/firestore";
 import { User } from "firebase/auth";
-// import UnOrderedStyle from "../components/UnOrderdStyle";
-
+import styled from "styled-components";
 
 type Id = {
-  id :string
-  timestamp: Timestamp
+  id: string;
+  timestamp: Timestamp;
 }
 
 type UserProps = {
-  user: User
+  user: User;
 }
 
+const formatTimestampToHoursAndMinutes = (timestamp: Timestamp): string => {
+  const date = new Date(timestamp.seconds * 1000);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
 
-const StopTimeList: React.FC<UserProps> = ({user}) => {
-  const [finishStampList, setFinishStampList] = useState<Id[]>([]);
-
-
+const StartTimeList: React.FC<UserProps> = ({ user }) => {
+  const [startStampList, setStartStampList] = useState<Id[]>([]);
 
   useEffect(() => {
-    const getFinishTime = async () => {
+    const contents = async () => {
       const data = await getDocs(query(collection(db, "users", user.uid, "finishTime"), orderBy("timestamp", "asc")));
-      setFinishStampList(data.docs.map((doc) => ({
+
+      setStartStampList(data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-        timestamp: doc.data({serverTimestamps: "estimate"}).timestamp,
+        timestamp: doc.data({ serverTimestamps: "estimate" }).timestamp,
       })));
-    }
-    getFinishTime()
-  }, [user.uid])
-
+    };
+    contents();
+  }, [user.uid]);
 
   return (
     <>
-      
-        {finishStampList.map((content) => (
-          <p key={content.id}>
-             {new Date(content.timestamp.seconds * 1000).toLocaleString()}
-          </p>
-
-        ))}
-   
+      {startStampList.map((content) => (
+        <P key={content.id}>
+          {formatTimestampToHoursAndMinutes(content.timestamp)}
+        </P>
+      ))}
     </>
   );
 };
 
+export default StartTimeList;
 
-export default StopTimeList;
+
+const P = styled.p`
+    border-bottom: solid 1px;
+`
